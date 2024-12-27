@@ -3,5 +3,11 @@ package app
 import tea "github.com/charmbracelet/bubbletea"
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return nil, nil
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if msg.String() == "q" {
+			return m, tea.Quit
+		}
+	}
+	return m, nil
 }
