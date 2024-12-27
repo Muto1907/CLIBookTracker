@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Muto1907/CLIBookTracker/cmd"
+	"fmt"
 )
 
 func main() {
-	cmd.Execute()
+	fmt.Printf("Hello World")
 }
