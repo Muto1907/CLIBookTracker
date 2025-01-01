@@ -15,24 +15,15 @@ type model struct {
 	selected map[int]struct{}
 	list     list.Model
 }
-type item struct {
-	title, desc string
-	pages       int
-}
-
-func (i item) Title() string       { return i.title }
-func (i item) Description() string { return i.desc }
-func (i item) FilterValue() string { return i.title }
-func (i item) Pages() int          { return i.pages }
 
 func NewModel() model {
 	items := []list.Item{
-		item{title: "Grokking Algorithms", desc: "Algorithms and Datastructures", pages: 43},
-		item{title: "Writing an Interpreter in Go", desc: "Theoretical Computer Science", pages: 32},
+		data.Book{Name: "Grokking Algorithms", Descr: "Algorithms and Datastructures", Pages: 43},
+		data.Book{Name: "Writing an Interpreter in Go", Descr: "Theoretical Computer Science", Pages: 32},
 	}
 	return model{
 		books: []data.Book{
-			{Id: 1, Title: "Grokking Algorithms", Chapters: 10,
+			{Id: 1, Name: "Grokking Algorithms", Chapters: 10,
 				Pages: 200, Genre: "CS Textbook", Author: "Aditya Bhargava"},
 		},
 		selected: make(map[int]struct{}),
