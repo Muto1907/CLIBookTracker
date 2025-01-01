@@ -1,5 +1,9 @@
 package data
 
+import (
+	"github.com/charmbracelet/bubbles/list"
+)
+
 type Book struct {
 	Id       uint
 	Name     string
@@ -18,4 +22,12 @@ func (b Book) Description() string {
 }
 func (b Book) FilterValue() string {
 	return b.Name
+}
+
+func BookToItems(books []Book) []list.Item {
+	var items []list.Item
+	for _, book := range books {
+		items = append(items, book)
+	}
+	return items
 }

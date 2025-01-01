@@ -17,17 +17,14 @@ type model struct {
 }
 
 func NewModel() model {
-	items := []list.Item{
+	books := []data.Book{
 		data.Book{Name: "Grokking Algorithms", Descr: "Algorithms and Datastructures", Pages: 43},
 		data.Book{Name: "Writing an Interpreter in Go", Descr: "Theoretical Computer Science", Pages: 32},
 	}
 	return model{
-		books: []data.Book{
-			{Id: 1, Name: "Grokking Algorithms", Chapters: 10,
-				Pages: 200, Genre: "CS Textbook", Author: "Aditya Bhargava"},
-		},
+		books:    books,
 		selected: make(map[int]struct{}),
-		list:     list.New(items, list.NewDefaultDelegate(), 20, 14),
+		list:     list.New(data.BookToItems(books), list.NewDefaultDelegate(), 20, 14),
 	}
 }
 
