@@ -7,11 +7,17 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const (
+	listView uint = iota
+	addView
+	progressView
+)
+
 var docstyle = lipgloss.NewStyle().Margin(1, 2)
 
 type model struct {
 	books    []data.Book
-	cursor   int
+	state    uint
 	selected map[int]struct{}
 	list     list.Model
 }
@@ -22,6 +28,7 @@ func NewModel() model {
 		{Name: "Writing an Interpreter in Go", Descr: "Theoretical Computer Science", Pages: 32},
 	}
 	return model{
+		state:    listView,
 		books:    books,
 		selected: make(map[int]struct{}),
 		list:     list.New(data.BookToItems(books), list.NewDefaultDelegate(), 20, 14),
