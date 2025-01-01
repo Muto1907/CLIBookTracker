@@ -5,13 +5,14 @@ import (
 )
 
 type Book struct {
-	Id       uint
-	Name     string
-	Descr    string
-	Chapters int
-	Pages    int
-	Genre    string
-	Author   string
+	Id        int64
+	Name      string
+	Descr     string
+	Chapters  int
+	Pages     int
+	Genre     string
+	Author    string
+	Completed bool
 }
 
 func (b Book) Title() string {
