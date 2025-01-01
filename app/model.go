@@ -18,8 +18,8 @@ type model struct {
 
 func NewModel() model {
 	books := []data.Book{
-		data.Book{Name: "Grokking Algorithms", Descr: "Algorithms and Datastructures", Pages: 43},
-		data.Book{Name: "Writing an Interpreter in Go", Descr: "Theoretical Computer Science", Pages: 32},
+		{Name: "Grokking Algorithms", Descr: "Algorithms and Datastructures", Pages: 43},
+		{Name: "Writing an Interpreter in Go", Descr: "Theoretical Computer Science", Pages: 32},
 	}
 	return model{
 		books:    books,
