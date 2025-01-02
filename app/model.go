@@ -35,11 +35,10 @@ func NewModel(store *data.Store) model {
 		log.Fatalf("unable to get books: %v", err)
 	}
 	return model{
-		store:    store,
-		state:    listView,
-		books:    books,
-		list:     list.New(data.BookToItems(books), list.NewDefaultDelegate(), 20, 14),
-		currBook: books[0],
+		store: store,
+		state: listView,
+		books: books,
+		list:  list.New(data.BookToItems(books), list.NewDefaultDelegate(), 20, 14),
 	}
 }
 
