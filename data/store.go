@@ -55,6 +55,12 @@ func (s *Store) GetBooks() ([]Book, error) {
 }
 
 func (s *Store) SaveBook(book Book) error {
+	if book.Id == 0 {
+		insertQuery := `INSERT INTO books (name, descr, chapters, pages, genre, author, completed)
+	VALUES (?, ?, ?, ?, ?, ?, ?);`
+		_, err := s.conn.Exec(insertQuery, book.Name, book.Descr, book.Chapters, book.Pages, book.Genre, book.Author, book.Completed)
+		return err
+	}
 	upsertQuery := `INSERT INTO books (id, name, descr, chapters, pages, genre, author, completed)
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 	ON CONFLICT(id) DO UPDATE
