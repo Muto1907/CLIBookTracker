@@ -21,6 +21,7 @@ func (s *Store) Init() error {
 		id integer not null primary key AUTOINCREMENT,
 		name text not null,
 		descr text not null,
+		chapters integer not null,
 		pages integer not null,
 		genre text not null,
 		author text not null,
@@ -44,7 +45,7 @@ func (s *Store) GetBooks() ([]Book, error) {
 	books := []Book{}
 	for rows.Next() {
 		var book Book
-		if err := rows.Scan(&book.Id, &book.Name, &book.Descr, &book.Pages,
+		if err := rows.Scan(&book.Id, &book.Name, &book.Descr, &book.Chapters, &book.Pages,
 			&book.Genre, &book.Author, &book.Completed); err != nil {
 			return nil, err
 		}
@@ -54,19 +55,20 @@ func (s *Store) GetBooks() ([]Book, error) {
 }
 
 func (s *Store) SaveBook(book Book) error {
-	upsertQuery := `INSERT INTO books (name, descr, pages, genre, author, completed)
-	VALUES (?, ?, ?, ?, ?, ?)
+	upsertQuery := `INSERT INTO books (id, name, descr, chapters, pages, genre, author, completed)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 	ON CONFLICT(id) DO UPDATE
 	SET 
 		name = excluded.name, 
 		descr = excluded.descr, 
+		chapters = excluded.chapters,
 		pages = excluded.pages, 
 		genre = excluded.genre, 
 		author = excluded.author, 
 		completed = excluded.completed;
 	`
 
-	if _, err := s.conn.Exec(upsertQuery, book.Id, book.Name, book.Descr, book.Pages, book.Genre, book.Author, book.Completed); err != nil {
+	if _, err := s.conn.Exec(upsertQuery, book.Id, book.Name, book.Descr, book.Chapters, book.Pages, book.Genre, book.Author, book.Completed); err != nil {
 		return err
 	}
 	return nil

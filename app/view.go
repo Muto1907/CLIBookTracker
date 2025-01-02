@@ -1,6 +1,20 @@
 package app
 
 func (m model) View() string {
-	s := docstyle.Render(m.list.View())
-	return s
+	switch m.state {
+	case listView:
+		return m.list.View()
+	case addView:
+		return docstyle.Render(
+			"Add a new Book\n\n" +
+				"Title: " + m.titleInput.View() + "\n" +
+				"Author: " + m.authorInput.View() + "\n" +
+				"Genre: " + m.genreInput.View() + "\n" +
+				"Description: " + m.descInput.View() + "\n" +
+				"Chapters: " + m.chaptersInput.View() + "\n" +
+				"Pages: " + m.pagesInput.View() + "\n\n" +
+				"Press [ctrl + s] tp Save, [tab] to Switch Fields, [ESC] to return",
+		)
+	}
+	return "Invalid State"
 }
