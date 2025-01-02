@@ -15,7 +15,7 @@ func main() {
 		log.Fatalf("Unable to init store: %v", err)
 	}
 
-	p := tea.NewProgram(app.NewModel(store))
+	p := tea.NewProgram(app.NewModel(store), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		log.Fatalf("Alas, there's been an error: %v", err)
 		os.Exit(1)
