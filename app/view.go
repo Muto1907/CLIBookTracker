@@ -15,6 +15,8 @@ func (m model) View() string {
 				"Pages: " + m.pagesInput.View() + "\n\n" +
 				"Press [ctrl + s] tp Save, [tab] to Switch Fields, [ESC] to return",
 		)
+	case progressView:
+		return docstyle.Render("Progress of " + m.currBook.Name)
 	}
 	return "Invalid State"
 }

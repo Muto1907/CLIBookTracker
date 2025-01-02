@@ -33,10 +33,6 @@ type model struct {
 }
 
 func NewModel(store *data.Store) model {
-	/*books := []data.Book{
-		{Name: "Grokking Algorithms", Descr: "Algorithms and Datastructures", Pages: 43},
-		{Name: "Writing an Interpreter in Go", Descr: "Theoretical Computer Science", Pages: 32},
-	}*/
 	titleInput := textinput.New()
 	titleInput.Placeholder = "Enter book title"
 	titleInput.Focus()

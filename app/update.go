@@ -21,6 +21,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			case "enter":
 				m.state = progressView
+				m.currBook = m.list.SelectedItem().(data.Book)
 				return m, nil
 			}
 		case addView:
@@ -29,26 +30,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.state = listView
 				return m, nil
 			case "tab":
-				if m.titleInput.Focused() {
-					m.titleInput.Blur()
-					m.authorInput.Focus()
-				} else if m.authorInput.Focused() {
-					m.authorInput.Blur()
-					m.genreInput.Focus()
-				} else if m.genreInput.Focused() {
-					m.genreInput.Blur()
-					m.descInput.Focus()
-				} else if m.descInput.Focused() {
-					m.descInput.Blur()
-					m.chaptersInput.Focus()
-				} else if m.chaptersInput.Focused() {
-					m.chaptersInput.Blur()
-					m.pagesInput.Focus()
-				} else if m.pagesInput.Focused() {
-					m.pagesInput.Blur()
-					m.titleInput.Focus()
-				}
-				return m, nil
+				return m.navigateTextInput()
 			case "ctrl+s":
 				pages, _ := strconv.Atoi(m.pagesInput.Value())
 				chapters, _ := strconv.Atoi(m.chaptersInput.Value())
@@ -109,4 +91,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(cmds...)
 	}
 	return m, cmd
+}
+
+func (m model) navigateTextInput() (tea.Model, tea.Cmd) {
+	if m.titleInput.Focused() {
+		m.titleInput.Blur()
+		m.authorInput.Focus()
+	} else if m.authorInput.Focused() {
+		m.authorInput.Blur()
+		m.genreInput.Focus()
+	} else if m.genreInput.Focused() {
+		m.genreInput.Blur()
+		m.descInput.Focus()
+	} else if m.descInput.Focused() {
+		m.descInput.Blur()
+		m.chaptersInput.Focus()
+	} else if m.chaptersInput.Focused() {
+		m.chaptersInput.Blur()
+		m.pagesInput.Focus()
+	} else if m.pagesInput.Focused() {
+		m.pagesInput.Blur()
+		m.titleInput.Focus()
+	}
+	return m, nil
 }
