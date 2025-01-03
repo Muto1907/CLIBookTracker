@@ -11,9 +11,9 @@ func (m model) View() string {
 				"Author: " + m.inputs[authorInput].View() + "\n" +
 				"Description: " + m.inputs[descInput].View() + "\n" +
 				"Genre: " + m.inputs[genreInput].View() + "\n" +
-				"Pages: " + m.inputs[pagesInput].View() + "\n\n" +
-				"Chapters: " + m.inputs[chaptersInput].View() + "\n" +
-				"Press [ctrl + s] tp Save, [tab] to Switch Fields, [ESC] to return",
+				"Pages: " + m.inputs[pagesInput].View() + "\n" +
+				"Chapters: " + m.inputs[chaptersInput].View() + "\n\n" +
+				"Press [ctrl + s] to Save, [tab] to Switch Fields, [ESC] to return",
 		)
 	case progressView:
 		return docstyle.Render("Progress of " + m.currBook.Name)
