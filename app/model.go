@@ -35,7 +35,12 @@ type model struct {
 	list     list.Model
 	inputs   []textinput.Model
 	currBook data.Book
+	err      error
 }
+
+type ErrMsg struct{ err error }
+
+func (e ErrMsg) Error() string { return e.err.Error() }
 
 func NewModel(store *data.Store) model {
 

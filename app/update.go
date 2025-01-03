@@ -34,13 +34,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.state = listView
 				return m, nil
 			case "y":
-				if err := m.store.DeleteBook(m.currBook); err != nil {
-					panic(err)
-				}
+				cmd := deleteBookCmd(m.currBook, m.store)
 				m.state = listView
-				m.books, _ = m.store.GetBooks()
-				m.list.SetItems(data.BookToItems(m.books))
-				m.state = listView
+				return m, cmd
 			}
 		case addView:
 			switch key {
@@ -57,8 +53,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				return m, nil
 			case "ctrl+s":
-				pages, _ := strconv.Atoi(m.inputs[4].Value())
-				chapters, _ := strconv.Atoi(m.inputs[5].Value())
+				pages, err := strconv.Atoi(m.inputs[pagesInput].Value())
+				if err != nil {
+					m.err = ErrMsg{err}
+					return m, nil
+				}
+				chapters, err := strconv.Atoi(m.inputs[chaptersInput].Value())
+				if err != nil {
+					m.err = ErrMsg{err}
+					return m, nil
+				}
 
 				newBook := data.Book{
 					Name:      m.inputs[titleInput].Value(),
@@ -69,18 +73,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					Pages:     pages,
 					Completed: false,
 				}
-				if err := m.store.SaveBook(newBook); err != nil {
-					panic(err)
-				}
+				cmd := saveBookCmd(newBook, m.store)
 				for i, input := range m.inputs {
 					input.SetValue("")
 					m.inputs[i] = input
 				}
 
 				m.state = listView
-				m.books, _ = m.store.GetBooks()
-				m.list.SetItems(data.BookToItems(m.books))
-				return m, nil
+				return m, cmd
 			}
 		case progressView:
 			if key == "q" {
@@ -91,6 +91,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		m.list.SetWidth(msg.Width)
+		return m, nil
+
+	case ErrMsg:
+		m.err = msg
+		return m, tea.Quit
+
+	case BooksMsg:
+		m.books = msg.Books
+		m.list.SetItems(data.BookToItems(m.books))
 		return m, nil
 	}
 

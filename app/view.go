@@ -1,6 +1,11 @@
 package app
 
+import "fmt"
+
 func (m model) View() string {
+	if m.err != nil {
+		return fmt.Sprintf("\nError: %v\n\n", m.err)
+	}
 	switch m.state {
 	case listView:
 		return m.list.View()
