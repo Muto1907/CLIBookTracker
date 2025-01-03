@@ -79,3 +79,12 @@ func (s *Store) SaveBook(book Book) error {
 	}
 	return nil
 }
+
+func (s *Store) DeleteBook(book Book) error {
+	deleteQuery := `DELETE FROM books WHERE id = ?`
+
+	if _, err := s.conn.Exec(deleteQuery, book.Id); err != nil {
+		return err
+	}
+	return nil
+}

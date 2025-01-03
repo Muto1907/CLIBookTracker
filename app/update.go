@@ -23,7 +23,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.state = progressView
 				m.currBook = m.list.SelectedItem().(data.Book)
 				return m, nil
+			case "ctrl+d":
+				m.currBook = m.list.SelectedItem().(data.Book)
+				if err := m.store.DeleteBook(m.currBook); err != nil {
+					panic(err)
+				}
+				m.state = listView
+				m.books, _ = m.store.GetBooks()
+				m.list.SetItems(data.BookToItems(m.books))
 			}
+
 		case addView:
 			switch key {
 			case "esc":
