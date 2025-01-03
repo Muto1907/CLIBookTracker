@@ -30,7 +30,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.state = listView
 				return m, nil
 			case "tab":
-				for i, _ := range m.inputs {
+				for i := range m.inputs {
 					if m.inputs[i].Focused() {
 						m.inputs[i].Blur()
 						m.inputs[(i+1)%len(m.inputs)].Focus()
@@ -82,7 +82,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list, cmd = m.list.Update(msg)
 	case addView:
 		var cmds []tea.Cmd
-		for i, _ := range m.inputs {
+		for i := range m.inputs {
 			m.inputs[i], cmd = m.inputs[i].Update(msg)
 			cmds = append(cmds, cmd)
 		}
