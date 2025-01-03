@@ -19,6 +19,7 @@ const (
 	confirmDeleteBookView
 	confirmDeleteNoteView
 	errorView
+	noteCreateView
 	noteslistView
 	notesEditView
 )
@@ -35,17 +36,18 @@ const (
 var docstyle = lipgloss.NewStyle().Margin(1, 2)
 
 type model struct {
-	books       []data.Book
-	progresses  []data.Progress
-	state       uint
-	store       *data.Store
-	list        list.Model
-	noteslist   list.Model
-	inputs      []textinput.Model
-	currBook    data.Book
-	err         error
-	progressBar progress.Model
-	noteInput   textarea.Model
+	books         []data.Book
+	progresses    []data.Progress
+	state         uint
+	store         *data.Store
+	list          list.Model
+	noteslist     list.Model
+	inputs        []textinput.Model
+	progressInput textinput.Model
+	currBook      data.Book
+	err           error
+	progressBar   progress.Model
+	noteInput     textarea.Model
 }
 
 type ErrMsg struct{ err error }
@@ -71,7 +73,6 @@ func NewModel(store *data.Store) model {
 
 	notesArea := textarea.New()
 	notesArea.Placeholder = "What did you read today?"
-	notesArea.Focus()
 	notesArea.SetWidth(40)
 	notesArea.SetHeight(10)
 	return model{
@@ -86,8 +87,9 @@ func NewModel(store *data.Store) model {
 			newTextInput("Enter description", false), newTextInput("Enter genre", false),
 			newTextInput("Enter total pages", false), newTextInput("Enter total chapters", false),
 		},
-		progressBar: progressBar,
-		noteInput:   notesArea,
+		progressInput: newTextInput("How many pages did you read today?", true),
+		progressBar:   progressBar,
+		noteInput:     notesArea,
 	}
 }
 

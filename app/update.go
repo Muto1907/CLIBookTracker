@@ -81,9 +81,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, cmd
 			}
 		case progressView:
-			if key == "q" {
+			switch key {
+			case "ctrl+c":
 				m.state = listView
 				return m, nil
+			case "tab":
+				if m.progressInput.Focused() {
+					m.progressInput.Blur()
+					m.noteInput.Focus()
+				} else if m.noteInput.Focused() {
+					m.noteInput.Blur()
+					m.progressInput.Focus()
+				}
+			case "ctrl+s":
+				m.state = noteCreateView
 			}
 		case errorView:
 			if key == "q" {
@@ -113,16 +124,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	var cmd tea.Cmd
+	var cmds []tea.Cmd
 	switch m.state {
 	case listView:
 		m.list, cmd = m.list.Update(msg)
 	case addView:
-		var cmds []tea.Cmd
 		for i := range m.inputs {
 			m.inputs[i], cmd = m.inputs[i].Update(msg)
 			cmds = append(cmds, cmd)
 		}
 		return m, tea.Batch(cmds...)
+	case progressView:
+		m.progressInput, cmd = m.progressInput.Update(msg)
+		cmds = append(cmds, cmd)
+		m.noteInput, cmd = m.noteInput.Update(msg)
+		cmds = append(cmds, cmd)
+		return m, tea.Batch(cmds...)
 	}
+
 	return m, cmd
 }
