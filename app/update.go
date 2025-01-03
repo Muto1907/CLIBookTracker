@@ -55,13 +55,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "ctrl+s":
 				pages, err := strconv.Atoi(m.inputs[pagesInput].Value())
 				if err != nil {
-					m.err = ErrMsg{err}
-					return m, nil
+					return m, sendErrorMsg(err)
 				}
 				chapters, err := strconv.Atoi(m.inputs[chaptersInput].Value())
 				if err != nil {
-					m.err = ErrMsg{err}
-					return m, nil
+					return m, sendErrorMsg(err)
 				}
 
 				newBook := data.Book{
@@ -87,6 +85,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.state = listView
 				return m, nil
 			}
+		case errorView:
+			if key == "q" {
+				m.state = listView
+			} else if key == "r" {
+				m.state = addView
+			}
+			m.err = nil
+			return m, nil
+
 		}
 
 	case tea.WindowSizeMsg:
@@ -95,7 +102,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case ErrMsg:
 		m.err = msg
-		return m, tea.Quit
+		m.state = errorView
+		return m, nil
 
 	case BooksMsg:
 		m.books = msg.Books

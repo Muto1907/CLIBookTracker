@@ -3,9 +3,6 @@ package app
 import "fmt"
 
 func (m model) View() string {
-	if m.err != nil {
-		return fmt.Sprintf("\nError: %v\n\n", m.err)
-	}
 	switch m.state {
 	case listView:
 		return m.list.View()
@@ -24,6 +21,8 @@ func (m model) View() string {
 		return docstyle.Render("Progress of " + m.currBook.Name)
 	case confirmDeleteView:
 		return docstyle.Render("Are you sure you want to delete " + m.currBook.Name + " ? (y/n)\n\n")
+	case errorView:
+		return docstyle.Render(fmt.Sprintf("Error: %v\n\nPress [r] to return to Add View or [q] to return to List View", m.err))
 	}
 
 	return "Invalid State"

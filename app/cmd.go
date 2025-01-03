@@ -18,16 +18,6 @@ func deleteBookCmd(book data.Book, store *data.Store) tea.Cmd {
 	}
 }
 
-/*func getBooksCmd(store *data.Store) tea.Cmd {
-	return func() tea.Msg {
-		books, err := store.GetBooks()
-		if err != nil {
-			return ErrMsg{err}
-		}
-		return BooksMsg{books}
-	}
-}*/
-
 func saveBookCmd(book data.Book, store *data.Store) tea.Cmd {
 	return func() tea.Msg {
 		if err := store.SaveBook(book); err != nil {
@@ -43,4 +33,10 @@ func saveBookCmd(book data.Book, store *data.Store) tea.Cmd {
 
 type BooksMsg struct {
 	Books []data.Book
+}
+
+func sendErrorMsg(err error) tea.Cmd {
+	return func() tea.Msg {
+		return ErrMsg{err}
+	}
 }

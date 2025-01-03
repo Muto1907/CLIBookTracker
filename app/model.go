@@ -15,6 +15,7 @@ const (
 	addView
 	progressView
 	confirmDeleteView
+	errorView
 )
 
 const (
