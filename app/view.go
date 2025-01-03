@@ -7,12 +7,12 @@ func (m model) View() string {
 	case addView:
 		return docstyle.Render(
 			"Add a new Book\n\n" +
-				"Title: " + m.titleInput.View() + "\n" +
-				"Author: " + m.authorInput.View() + "\n" +
-				"Genre: " + m.genreInput.View() + "\n" +
-				"Description: " + m.descInput.View() + "\n" +
-				"Chapters: " + m.chaptersInput.View() + "\n" +
-				"Pages: " + m.pagesInput.View() + "\n\n" +
+				"Title: " + m.inputs[titleInput].View() + "\n" +
+				"Author: " + m.inputs[authorInput].View() + "\n" +
+				"Description: " + m.inputs[descInput].View() + "\n" +
+				"Genre: " + m.inputs[genreInput].View() + "\n" +
+				"Pages: " + m.inputs[pagesInput].View() + "\n\n" +
+				"Chapters: " + m.inputs[chaptersInput].View() + "\n" +
 				"Press [ctrl + s] tp Save, [tab] to Switch Fields, [ESC] to return",
 		)
 	case progressView:

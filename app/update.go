@@ -30,16 +30,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.state = listView
 				return m, nil
 			case "tab":
-				return m.navigateTextInput()
+				for i, _ := range m.inputs {
+					if m.inputs[i].Focused() {
+						m.inputs[i].Blur()
+						m.inputs[(i+1)%len(m.inputs)].Focus()
+						break
+					}
+				}
+				return m, nil
 			case "ctrl+s":
-				pages, _ := strconv.Atoi(m.pagesInput.Value())
-				chapters, _ := strconv.Atoi(m.chaptersInput.Value())
+				pages, _ := strconv.Atoi(m.inputs[4].Value())
+				chapters, _ := strconv.Atoi(m.inputs[5].Value())
 
 				newBook := data.Book{
-					Name:      m.titleInput.Value(),
-					Author:    m.authorInput.Value(),
-					Descr:     m.descInput.Value(),
-					Genre:     m.genreInput.Value(),
+					Name:      m.inputs[titleInput].Value(),
+					Author:    m.inputs[authorInput].Value(),
+					Descr:     m.inputs[descInput].Value(),
+					Genre:     m.inputs[genreInput].Value(),
 					Chapters:  chapters,
 					Pages:     pages,
 					Completed: false,
@@ -47,12 +54,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if err := m.store.SaveBook(newBook); err != nil {
 					panic(err)
 				}
-				m.titleInput.SetValue("")
-				m.authorInput.SetValue("")
-				m.genreInput.SetValue("")
-				m.descInput.SetValue("")
-				m.pagesInput.SetValue("")
-				m.chaptersInput.SetValue("")
+				for i, input := range m.inputs {
+					input.SetValue("")
+					m.inputs[i] = input
+				}
+
 				m.state = listView
 				m.books, _ = m.store.GetBooks()
 				m.list.SetItems(data.BookToItems(m.books))
@@ -76,42 +82,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list, cmd = m.list.Update(msg)
 	case addView:
 		var cmds []tea.Cmd
-		m.titleInput, cmd = m.titleInput.Update(msg)
-		cmds = append(cmds, cmd)
-		m.authorInput, cmd = m.authorInput.Update(msg)
-		cmds = append(cmds, cmd)
-		m.genreInput, cmd = m.genreInput.Update(msg)
-		cmds = append(cmds, cmd)
-		m.descInput, cmd = m.descInput.Update(msg)
-		cmds = append(cmds, cmd)
-		m.pagesInput, cmd = m.pagesInput.Update(msg)
-		cmds = append(cmds, cmd)
-		m.chaptersInput, cmd = m.chaptersInput.Update(msg)
-		cmds = append(cmds, cmd)
+		for i, _ := range m.inputs {
+			m.inputs[i], cmd = m.inputs[i].Update(msg)
+			cmds = append(cmds, cmd)
+		}
 		return m, tea.Batch(cmds...)
 	}
 	return m, cmd
-}
-
-func (m model) navigateTextInput() (tea.Model, tea.Cmd) {
-	if m.titleInput.Focused() {
-		m.titleInput.Blur()
-		m.authorInput.Focus()
-	} else if m.authorInput.Focused() {
-		m.authorInput.Blur()
-		m.genreInput.Focus()
-	} else if m.genreInput.Focused() {
-		m.genreInput.Blur()
-		m.descInput.Focus()
-	} else if m.descInput.Focused() {
-		m.descInput.Blur()
-		m.chaptersInput.Focus()
-	} else if m.chaptersInput.Focused() {
-		m.chaptersInput.Blur()
-		m.pagesInput.Focus()
-	} else if m.pagesInput.Focused() {
-		m.pagesInput.Blur()
-		m.titleInput.Focus()
-	}
-	return m, nil
 }
