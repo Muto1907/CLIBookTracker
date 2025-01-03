@@ -18,8 +18,8 @@ func (m model) View() string {
 				"Press [ctrl + s] to Save, [tab] to Switch Fields, [ESC] to return",
 		)
 	case progressView:
-		return docstyle.Render("Progress of " + m.currBook.Name)
-	case confirmDeleteView:
+		return docstyle.Render(fmt.Sprintf("%s by %s\nGenre: %s\n%s\nChapters: %d\nTotalPages: %d", m.currBook.Name, m.currBook.Author, m.currBook.Genre, m.currBook.Descr, m.currBook.Chapters, m.currBook.Pages))
+	case confirmDeleteBookView:
 		return docstyle.Render("Are you sure you want to delete " + m.currBook.Name + " ? (y/n)\n\n")
 	case errorView:
 		return docstyle.Render(fmt.Sprintf("Error: %v\n\nPress [r] to return to Add View or [q] to return to List View", m.err))

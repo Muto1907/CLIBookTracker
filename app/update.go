@@ -25,10 +25,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			case "ctrl+d":
 				m.currBook = m.list.SelectedItem().(data.Book)
-				m.state = confirmDeleteView
+				m.state = confirmDeleteBookView
 				return m, nil
 			}
-		case confirmDeleteView:
+		case confirmDeleteBookView:
 			switch key {
 			case "n":
 				m.state = listView

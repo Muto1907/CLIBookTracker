@@ -40,3 +40,33 @@ func sendErrorMsg(err error) tea.Cmd {
 		return ErrMsg{err}
 	}
 }
+
+func deleteProgressCmd(prog data.Progress, store *data.Store) tea.Cmd {
+	return func() tea.Msg {
+		if err := store.DeleteProgress(prog); err != nil {
+			return ErrMsg{err}
+		}
+		progresses, err := store.GetProgress()
+		if err != nil {
+			return ErrMsg{err}
+		}
+		return ProgressMsg{progresses}
+	}
+}
+
+func saveProgressCmd(prog data.Progress, store *data.Store) tea.Cmd {
+	return func() tea.Msg {
+		if err := store.SaveProgress(prog); err != nil {
+			return ErrMsg{err}
+		}
+		progresses, err := store.GetProgress()
+		if err != nil {
+			return ErrMsg{err}
+		}
+		return ProgressMsg{progresses}
+	}
+}
+
+type ProgressMsg struct {
+	Progresses []data.Progress
+}
