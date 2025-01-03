@@ -17,6 +17,9 @@ func (m model) View() string {
 		)
 	case progressView:
 		return docstyle.Render("Progress of " + m.currBook.Name)
+	case confirmDeleteView:
+		return docstyle.Render("Are you sure you want to delete " + m.currBook.Name + " ? (y/n)\n\n")
 	}
+
 	return "Invalid State"
 }

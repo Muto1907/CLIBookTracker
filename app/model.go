@@ -14,6 +14,7 @@ const (
 	listView uint = iota
 	addView
 	progressView
+	confirmDeleteView
 )
 
 const (
