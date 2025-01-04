@@ -41,12 +41,22 @@ func sendErrorMsg(err error) tea.Cmd {
 	}
 }
 
+func getProgressesCmd(store *data.Store, bookId int64) tea.Cmd {
+	return func() tea.Msg {
+		progresses, err := store.GetProgress(bookId)
+		if err != nil {
+			return ErrMsg{err}
+		}
+		return ProgressMsg{progresses}
+	}
+}
+
 func deleteProgressCmd(prog data.Progress, store *data.Store) tea.Cmd {
 	return func() tea.Msg {
 		if err := store.DeleteProgress(prog); err != nil {
 			return ErrMsg{err}
 		}
-		progresses, err := store.GetProgress()
+		progresses, err := store.GetProgress(prog.Book_id)
 		if err != nil {
 			return ErrMsg{err}
 		}
@@ -56,10 +66,11 @@ func deleteProgressCmd(prog data.Progress, store *data.Store) tea.Cmd {
 
 func saveProgressCmd(prog data.Progress, store *data.Store) tea.Cmd {
 	return func() tea.Msg {
+
 		if err := store.SaveProgress(prog); err != nil {
 			return ErrMsg{err}
 		}
-		progresses, err := store.GetProgress()
+		progresses, err := store.GetProgress(prog.Book_id)
 		if err != nil {
 			return ErrMsg{err}
 		}

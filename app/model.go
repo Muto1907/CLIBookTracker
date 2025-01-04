@@ -45,6 +45,7 @@ type model struct {
 	inputs        []textinput.Model
 	progressInput textinput.Model
 	currBook      data.Book
+	currProgress  data.Progress
 	err           error
 	progressBar   progress.Model
 	noteInput     textarea.Model
@@ -61,11 +62,6 @@ func NewModel(store *data.Store) model {
 		log.Fatalf("unable to get books: %v", err)
 	}
 
-	progresses, err := store.GetProgress()
-	if err != nil {
-		log.Fatalf("unable to get progress: %v", err)
-	}
-
 	progressBar := progress.New(
 		progress.WithScaledGradient("#DF6020", "#331005"),
 		progress.WithWidth(40),
@@ -76,18 +72,17 @@ func NewModel(store *data.Store) model {
 	notesArea.SetWidth(40)
 	notesArea.SetHeight(10)
 	return model{
-		store:      store,
-		state:      listView,
-		books:      books,
-		progresses: progresses,
-		list:       list.New(data.BookToItems(books), list.NewDefaultDelegate(), 20, 14),
-		noteslist:  list.New(data.ProgressToItems(progresses), list.NewDefaultDelegate(), 20, 14),
+		store:     store,
+		state:     listView,
+		books:     books,
+		list:      list.New(data.BookToItems(books), list.NewDefaultDelegate(), 20, 14),
+		noteslist: list.New([]list.Item{}, list.NewDefaultDelegate(), 20, 14),
 		inputs: []textinput.Model{
 			newTextInput("Enter book title", true), newTextInput("Enter author name", false),
 			newTextInput("Enter description", false), newTextInput("Enter genre", false),
 			newTextInput("Enter total pages", false), newTextInput("Enter total chapters", false),
 		},
-		progressInput: newTextInput("How many pages did you read today?", true),
+		progressInput: newTextInput("Until which page did you read today?", true),
 		progressBar:   progressBar,
 		noteInput:     notesArea,
 	}

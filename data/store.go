@@ -38,6 +38,7 @@ func (s *Store) Init() error {
 		start_page INTEGER NOT NULL,
 		end_page INTEGER NOT NULL,
 		note TEXT,
+		date TEXT NOT NULL,
 		FOREIGN KEY (book_id) REFERENCES books (id)
 	);`
 
@@ -102,8 +103,8 @@ func (s *Store) DeleteBook(book Book) error {
 	return nil
 }
 
-func (s *Store) GetProgress() ([]Progress, error) {
-	rows, err := s.conn.Query("SELECT * FROM progress")
+func (s *Store) GetProgress(bookId int64) ([]Progress, error) {
+	rows, err := s.conn.Query("SELECT * FROM progress WHERE book_id = ?", bookId)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +114,7 @@ func (s *Store) GetProgress() ([]Progress, error) {
 	progress := []Progress{}
 	for rows.Next() {
 		var prog Progress
-		if err := rows.Scan(&prog.Id, &prog.Book_id, &prog.Start_Page, &prog.End_Page, &prog.Note); err != nil {
+		if err := rows.Scan(&prog.Id, &prog.Book_id, &prog.Start_Page, &prog.End_Page, &prog.Note, &prog.Date); err != nil {
 			return nil, err
 		}
 		progress = append(progress, prog)
@@ -122,9 +123,9 @@ func (s *Store) GetProgress() ([]Progress, error) {
 }
 
 func (s *Store) GetLatestProgress(book Book) (Progress, error) {
-	row := s.conn.QueryRow("SELECT to_page FROM progress WHERE book_id = ? ORDER BY id DESC LIMIT 1;", book.Id)
+	row := s.conn.QueryRow("SELECT to_page FROM progress WHERE book_id = ? ORDER BY end_page DESC LIMIT 1;", book.Id)
 	var prog Progress
-	if err := row.Scan(&prog.Id, &prog.Book_id, &prog.Start_Page, &prog.End_Page, &prog.Note); err != nil {
+	if err := row.Scan(&prog.Id, &prog.Book_id, &prog.Start_Page, &prog.End_Page, &prog.Note, &prog.Date); err != nil {
 		return prog, err
 	}
 	return prog, nil
@@ -132,21 +133,22 @@ func (s *Store) GetLatestProgress(book Book) (Progress, error) {
 
 func (s *Store) SaveProgress(prog Progress) error {
 	if prog.Id == 0 {
-		insertQuery := `INSERT INTO progress (book_id, start_page, end_page, Note)
-	VALUES (?, ?, ?, ?);`
-		_, err := s.conn.Exec(insertQuery, prog.Book_id, prog.Start_Page, prog.End_Page, prog.Note)
+		insertQuery := `INSERT INTO progress (book_id, start_page, end_page, note, date)
+	VALUES (?, ?, ?, ?, ?);`
+		_, err := s.conn.Exec(insertQuery, prog.Book_id, prog.Start_Page, prog.End_Page, prog.Note, prog.Date)
 		return err
 	}
-	upsertQuery := `INSERT INTO progress (id, book_id, start_page, end_page, Note)
-	VALUES (?, ?, ?, ?, ?)
+	upsertQuery := `INSERT INTO progress (id, book_id, start_page, end_page, note, date)
+	VALUES (?, ?, ?, ?, ?, ?)
 	ON CONFLICT(id) DO UPDATE
 	SET 
-		from = excluded.start_page,
-		to = excluded.end_page, 
-		note = excluded.note;
+		start_page = excluded.start_page,
+		end_page = excluded.end_page, 
+		note = excluded.note,
+		date = excluded.date;
 	`
 
-	if _, err := s.conn.Exec(upsertQuery, prog.Id, prog.Book_id, prog.Start_Page, prog.End_Page, prog.Note); err != nil {
+	if _, err := s.conn.Exec(upsertQuery, prog.Id, prog.Book_id, prog.Start_Page, prog.End_Page, prog.Note, prog.Date); err != nil {
 		return err
 	}
 	return nil

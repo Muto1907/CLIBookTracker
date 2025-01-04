@@ -38,13 +38,17 @@ func BookToItems(books []Book) []list.Item {
 type Progress struct {
 	Id         int64
 	Book_id    int64
-	Start_Page int64
-	End_Page   int64
+	Start_Page int
+	End_Page   int
 	Note       string
+	Date       string
 }
 
 func (p Progress) Title() string {
-	return p.Note[:30]
+	if len(p.Note) > 30 {
+		return p.Note[:30]
+	}
+	return p.Note
 }
 
 func (p Progress) Description() string {
