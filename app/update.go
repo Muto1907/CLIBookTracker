@@ -232,7 +232,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.noteslist, cmd = m.noteslist.Update(msg)
 	case notesEditView:
 		m.progressInput, cmd = m.progressInput.Update(msg)
+		cmds = append(cmds, cmd)
 		m.noteInput, cmd = m.noteInput.Update(msg)
+		cmds = append(cmds, cmd)
+		return m, tea.Batch(cmds...)
 	}
 
 	return m, cmd
