@@ -1,35 +1,46 @@
 package app
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/charmbracelet/lipgloss"
+)
+
+var (
+	listStyle    = lipgloss.NewStyle().Padding(1, 2).Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("62"))
+	inputStyle   = lipgloss.NewStyle().Padding(1, 2).AlignHorizontal(lipgloss.Center).Bold(true).Border(lipgloss.NormalBorder()).BorderForeground(lipgloss.Color("63"))
+	errorStyle   = lipgloss.NewStyle().Padding(1, 2).AlignHorizontal(lipgloss.Center).AlignVertical(lipgloss.Center).Blink(true).Background(lipgloss.Color("9")).Border(lipgloss.ThickBorder()).BorderForeground(lipgloss.Color("59"))
+	confirmStyle = lipgloss.NewStyle().Padding(1, 2).AlignHorizontal(lipgloss.Center).AlignVertical(lipgloss.Center).Blink(true).Background(lipgloss.Color("63")).Border(lipgloss.ThickBorder()).BorderForeground(lipgloss.Color("59"))
+)
 
 func (m model) View() string {
 	switch m.state {
 	case listView:
-		return m.list.View()
+		return listStyle.Render(m.list.View())
 	case addView:
-		return docstyle.Render(
-			"Add a new Book\n\n" +
-				"Title: " + m.inputs[titleInput].View() + "\n" +
-				"Author: " + m.inputs[authorInput].View() + "\n" +
-				"Description: " + m.inputs[descInput].View() + "\n" +
-				"Genre: " + m.inputs[genreInput].View() + "\n" +
-				"Pages: " + m.inputs[pagesInput].View() + "\n" +
-				"Chapters: " + m.inputs[chaptersInput].View() + "\n\n" +
-				"Press [ctrl + s] to Save, [tab] to Switch Fields, [ESC] to return",
-		)
+		return inputStyle.Render(lipgloss.JoinVertical(lipgloss.Left,
+			"Add a new Book\n",
+			"Title: "+m.inputs[titleInput].View(),
+			"Author: "+m.inputs[authorInput].View(),
+			"Description: "+m.inputs[descInput].View(),
+			"Genre: "+m.inputs[genreInput].View(),
+			"Pages: "+m.inputs[pagesInput].View(),
+			"Chapters: "+m.inputs[chaptersInput].View(),
+			"\n\nPress [ctrl + s] to Save, [tab] to Switch Fields, [ESC] to return",
+		))
 	case progressView:
-		return docstyle.Render(fmt.Sprintf("%s by %s\nGenre: %s\n%s\nChapters: %d\nTotalPages: %d\n\nDid you read any pages today?\n%s\n\n%s", m.currBook.Name, m.currBook.Author,
+		return inputStyle.Render(fmt.Sprintf("%s by %s\nGenre: %s\n%s\nChapters: %d\nTotalPages: %d\n\nDid you read any pages today?\n%s\n\n%s", m.currBook.Name, m.currBook.Author,
 			m.currBook.Genre, m.currBook.Descr, m.currBook.Chapters, m.currBook.Pages, m.progressInput.View(), m.noteInput.View()))
 	case confirmDeleteBookView:
-		return docstyle.Render("Are you sure you want to delete " + m.currBook.Name + " ? (y/n)\n\n")
+		return confirmStyle.Render("Are you sure you want to delete " + m.currBook.Name + " ? \n(y/n)")
 	case confirmDeleteNoteView:
-		return docstyle.Render("Are you sure you want to delete your progress from " + m.currProgress.Date + " ? (y/n)\n\n")
+		return confirmStyle.Render("Are you sure you want to delete your progress from " + m.currProgress.Date + " ?\n(y/n)")
 	case errorView:
-		return docstyle.Render(fmt.Sprintf("Error: %v\n\nPress [r] to return to Add View or [q] to return to List View", m.err))
+		return errorStyle.Render(fmt.Sprintf("Error: %v\n\nPress [r] to return to Add View or [q] to return to List View", m.err))
 	case noteslistView:
-		return docstyle.Render(m.noteslist.View())
+		return listStyle.Render(m.noteslist.View())
 	case notesEditView:
-		return docstyle.Render("Edit note from " + m.currProgress.Date + "\n\n" +
+		return inputStyle.Render("Edit note from " + m.currProgress.Date + "\n\n" +
 			m.progressInput.View() + "\n\n" + m.noteInput.View() + "\n\n" +
 			"Press [ctrl + s] to Save, [tab] to Switch Fields, [ESC] to return")
 

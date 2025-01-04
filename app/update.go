@@ -16,9 +16,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch m.state {
 		case listView:
 			switch key {
-			case "q":
+			case "esc":
 				return m, tea.Quit
-			case "a":
+			case "ctrl+a":
 				m.state = addView
 				return m, nil
 			case "enter":
@@ -192,8 +192,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case tea.WindowSizeMsg:
-		h, v := docstyle.GetFrameSize()
+		h, v := listStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
+		m.noteslist.SetSize(msg.Width-h, msg.Height-v)
 		return m, nil
 
 	case ErrMsg:

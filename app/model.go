@@ -9,7 +9,6 @@ import (
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 const (
@@ -32,8 +31,6 @@ const (
 	pagesInput
 	chaptersInput
 )
-
-var docstyle = lipgloss.NewStyle().Margin(1, 2)
 
 type model struct {
 	books         []data.Book
@@ -71,12 +68,12 @@ func NewModel(store *data.Store) model {
 	notesArea.Placeholder = "What did you read today?"
 	notesArea.SetWidth(40)
 	notesArea.SetHeight(10)
-	return model{
+	model := model{
 		store:     store,
 		state:     listView,
 		books:     books,
-		list:      list.New(data.BookToItems(books), list.NewDefaultDelegate(), 20, 14),
-		noteslist: list.New([]list.Item{}, list.NewDefaultDelegate(), 20, 14),
+		list:      list.New(data.BookToItems(books), list.NewDefaultDelegate(), 0, 0),
+		noteslist: list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
 		inputs: []textinput.Model{
 			newTextInput("Enter book title", true), newTextInput("Enter author name", false),
 			newTextInput("Enter description", false), newTextInput("Enter genre", false),
@@ -86,6 +83,8 @@ func NewModel(store *data.Store) model {
 		progressBar:   progressBar,
 		noteInput:     notesArea,
 	}
+	model.list.Title = "Books"
+	return model
 }
 
 func (m model) Init() tea.Cmd {
